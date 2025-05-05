@@ -1,0 +1,4 @@
+GPU Benchmarks (SLURM)
+1000 particles (SLURM): 0.0589669 seconds
+10000 particles (SLURM): 0.469944 seconds
+100000 particles (SLURM): 23.4493 seconds

@@ -1,0 +1,4 @@
+CPU Benchmarks
+1000 particles: .095784481 seconds
+10000 particles: .099634726 seconds
+100000 particles: .133130649 seconds
