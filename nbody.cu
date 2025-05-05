@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     }
 
     cudaEventRecord(end, 0);
-    cudaEventSynchronize();
+    cudaEventSynchronize(end);
     float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, end);
     std::cout << "GPU Execution Time: " << milliseconds / 1000.0 << " seconds for " << n << " bodies and " << steps << " steps\n";
