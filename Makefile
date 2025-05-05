@@ -1,32 +1,25 @@
-CXXFLAGS=-O3
-NVCC = nvcc
+# Makefile
 
-ARCH = -arch=sm_61
-CFLAGS = -O2 -std=c++11
+# Compiler and flags
+NVCC := nvcc
+CFLAGS := -O2
 
-TARGET = nbody
-SRC = nbody.cu
+# File names
+TARGET := nbody
+SRC := nbody.cu
+SLURM_SCRIPT := run_nbody.slurm
 
-nbody: nbody.cpp
-	g++ -O3 nbody.cpp -o nbody
-
+# Default target: build the binary
 all: $(TARGET)
 
+# Compile the CUDA source
 $(TARGET): $(SRC)
-	$(NVCC) $(ARCH) $(CFLAGS) -o $@ $^
+	$(NVCC) $(CFLAGS) -o $@ $^
 
+# Submit the SLURM job
+submit: $(TARGET)
+	sbatch $(SLURM_SCRIPT)
+
+# Clean the build
 clean:
-	rm -f $(TARGET)
-
-solar.out: nbody
-	date
-	./nbody planet 200 5000000 10000 > solar.out # maybe a minutes
-	date
-
-solar.pdf: solar.out
-	python3 plot.py solar.out solar.pdf 1000 
-
-random.out: nbody
-	date
-	./nbody 1000 1 10000 100 > random.out # maybe 5 minutes
-	date
+	rm -f $(TARGET) *.o *.txt *.out
