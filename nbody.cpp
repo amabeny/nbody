@@ -39,9 +39,9 @@ struct simulation {
 void random_init(simulation& s) {
   std::random_device rd;  
   std::mt19937 gen(rd());
-  std::uniform_real_distribution dismass(0.9, 1.);
-  std::normal_distribution dispos(0., 1.);
-  std::normal_distribution disvel(0., 1.);
+  std::uniform_real_distribution<float> dismass(0.9, 1.0);
+  std::normal_distribution<float> dispos(0.0, 1.0);
+  std::normal_distribution<float> disvel(0.0, 1.0);
 
   for (size_t i = 0; i<s.nbpart; ++i) {
     s.mass[i] = dismass(gen);
