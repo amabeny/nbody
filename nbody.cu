@@ -2,51 +2,51 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
+#include <cuda_runtime.h>
 
 #define BLOCK_SIZE 256
-#define G 6.67430e-11f
-#define DT 0.01f
+#define G 6.67430e-11
 
 struct Body {
-    float x, y;
-    float vx, vy;
-    float mass;
+    double x, y, z;
+    double vx, vy, vz;
+    double mass;
+    double fx, fy, fz; // To store forces if needed for output
 };
 
-__global__ void update_positions(Body* bodies, int n) {
+__global__ void update_positions(Body* bodies, int n, double dt) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n) return;
 
-    float fx = 0.0f;
-    float fy = 0.0f;
+    double local_fx = 0.0;
+    double local_fy = 0.0;
+    double local_fz = 0.0;
 
     for (int j = 0; j < n; j++) {
         if (i == j) continue;
-        float dx = bodies[j].x - bodies[i].x;
-        float dy = bodies[j].y - bodies[i].y;
-        float dist_sqr = dx * dx + dy * dy + 1e-9f;
-        float force = G * bodies[i].mass * bodies[j].mass / dist_sqr;
-        float dist = sqrtf(dist_sqr);
-        fx += force * dx / dist;
-        fy += force * dy / dist;
+        double dx = bodies[j].x - bodies[i].x;
+        double dy = bodies[j].y - bodies[i].y;
+        double dz = bodies[j].z - bodies[i].z;
+        double dist_sqr = dx * dx + dy * dy + dz * dz + 1e-9;
+        double dist = sqrt(dist_sqr);
+        double force = G * bodies[i].mass * bodies[j].mass / dist_sqr;
+
+        local_fx += force * dx / dist;
+        local_fy += force * dy / dist;
+        local_fz += force * dz / dist;
     }
 
-    float ax = fx / bodies[i].mass;
-    float ay = fy / bodies[i].mass;
+    bodies[i].fx = local_fx; // Store forces (optional, for output)
+    bodies[i].fy = local_fy;
+    bodies[i].fz = local_fz;
 
-    bodies[i].vx += ax * DT;
-    bodies[i].vy += ay * DT;
-    bodies[i].x += bodies[i].vx * DT;
-    bodies[i].y += bodies[i].vy * DT;
-}
+    bodies[i].vx += local_fx / bodies[i].mass * dt;
+    bodies[i].vy += local_fy / bodies[i].mass * dt;
+    bodies[i].vz += local_fz / bodies[i].mass * dt;
 
-void initialize_bodies(Body* bodies, int n) {
-    for (int i = 0; i < n; i++) {
-        bodies[i].x = static_cast<float>(rand()) / RAND_MAX * 100.0f;
-        bodies[i].y = static_cast<float>(rand()) / RAND_MAX * 100.0f;
-        bodies[i].vx = 0.0f;
-        bodies[i].vy = 0.0f;
-        bodies[i].mass = static_cast<float>(rand()) / RAND_MAX * 1e5f + 1e3f;
+    bodies[i].x += bodies[i].vx * dt;
+    bodies[i].y += bodies[i].vy * dt;
+    bodies[i].z += bodies[i].vz * dt;
     }
 }
 
