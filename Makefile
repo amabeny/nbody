@@ -1,7 +1,22 @@
 CXXFLAGS=-O3
+NVCC = nvcc
+
+ARCH = -arch=sm_61
+CFLAGS = -O2 -std=c++11
+
+TARGET = nbody
+SRC = nbody.cu
 
 nbody: nbody.cpp
 	g++ -O3 nbody.cpp -o nbody
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(NVCC) $(ARCH) $(CFLAGS) -o $@ $^
+
+clean:
+	rm -f $(TARGET)
 
 solar.out: nbody
 	date
