@@ -1,25 +1,27 @@
-# Makefile
+# Makefile for N-Body Simulation (CPU and GPU)
 
 # Compiler and flags
-NVCC := nvcc
-CFLAGS := -O2
+CXX = g++
+NVCC = nvcc
+CXXFLAGS = -O2 -std=c++11
+NVCCFLAGS = -O2 -arch=sm_70  # adjust arch for your Centaurus GPU node
 
-# File names
-TARGET := nbody
-SRC := nbody.cu
-SLURM_SCRIPT := run_nbody.slurm
+# Targets
+TARGET_CPU = nbody_cpu
+TARGET_GPU = nbody_gpu
 
-# Default target: build the binary
-all: $(TARGET)
+# Source files
+SRC_CPU = nbody.cpp
+SRC_GPU = nbody.cu
 
-# Compile the CUDA source
-$(TARGET): $(SRC)
-	$(NVCC) $(CFLAGS) -o $@ $^
+# Rules
+all: $(TARGET_CPU) $(TARGET_GPU)
 
-# Submit the SLURM job
-submit: $(TARGET)
-	sbatch $(SLURM_SCRIPT)
+$(TARGET_CPU): $(SRC_CPU)
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
-# Clean the build
+$(TARGET_GPU): $(SRC_GPU)
+	$(NVCC) $(NVCCFLAGS) -o $@ $<
+
 clean:
-	rm -f $(TARGET) *.o *.txt *.out
+	rm -f $(TARGET_CPU) $(TARGET_GPU)
