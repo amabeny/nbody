@@ -1,0 +1,22 @@
+Comparison: CPU vs. GPU n-body simulation
+
+Test Case: 1000 Particles, 10 Steps
+
+CPU Execution Time: 0.095 seconds
+GPU Execution Time (SLURM): 0.059 seconds
+
+Test Case: 10000 Particles, 10 Steps
+
+CPU Execution Time: 0.099 seconds
+GPU Execution Time (SLURM): 0.470 seconds
+
+Test Case: 100000 Particles, 10 Steps
+
+CPU Execution Time: 0.133 seconds
+GPU Execution Time (SLURM): 23.449 seconds
+
+Observations:
+
+- For 1000 particles, the GPU execution time was faster than the CPU.
+- For 10000 particles, the CPU execution time was faster than the GPU execution time.
+- For 100000 particles, the CPU execution time was significantly faster than the GPU execution time.
