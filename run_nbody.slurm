@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=nbody_gpu
+#SBATCH --partition=GPU
 #SBATCH --output=nbody_gpu_output.txt
 #SBATCH --error=nbody_gpu_error.txt
-#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=00:10:00
 #SBATCH --mem=4G
